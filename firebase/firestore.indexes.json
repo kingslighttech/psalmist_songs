@@ -1,0 +1,18 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "comments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "comment_song",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "comment_by",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ]
+}

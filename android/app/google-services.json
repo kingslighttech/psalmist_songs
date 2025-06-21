@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "929055034701",
+    "firebase_url": "https://music-template-mkrjdo-default-rtdb.firebaseio.com",
+    "project_id": "music-template-mkrjdo",
+    "storage_bucket": "music-template-mkrjdo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:929055034701:android:06239206d43889359c3b04",
+        "android_client_info": {
+          "package_name": "com.mycompany.musictemplate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "929055034701-am77iov08qh9rfmgtguog3vt5ig3lklq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mycompany.musictemplate",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "929055034701-rvaknfb5ft99m6bk9764lob9vvv05pq2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mycompany.musictemplate",
+            "certificate_hash": "0a6488e9918b067a4cf478f2c3a3ee7c9bf6cbbd"
+          }
+        },
+        {
+          "client_id": "929055034701-rj8f6di5tpkcbdsh83qj9n1d1imojc1l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQubFKW_Qvh5NMua4DjIzee5SMoYexr30"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "929055034701-rj8f6di5tpkcbdsh83qj9n1d1imojc1l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "929055034701-7blpmjv9dp0ma3hs2vivi3j9ko6hbaj2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mycompany.admindashboardapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
