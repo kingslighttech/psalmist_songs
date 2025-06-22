@@ -1,40 +1,46 @@
-name: Build and Deploy Flutter Web
+name: Flutter CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.9'  # Use older version compatible with go_router you're locking
+          flutter-version: '3.22.1' # Or your Flutter version
           channel: stable
 
-      - name: Remove flutter_test from pubspec.yaml (for CI only)
+      - name: Install dependencies (except go_router)
         run: |
-          sed -i '/flutter_test:/,+1d' pubspec.yaml
+          # Ensure pubspec.yaml has go_router locked to 6.5.0
+          flutter pub upgrade --major-versions
 
-      - name: Get dependencies
-        run: flutter pub get
+      - name: Analyze project
+        run: flutter analyze
 
-      - name: Build Flutter Web
-        run: flutter build web --release
+      - name: Run tests
+        run: flutter test
 
-      - name: Deploy to Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Build APK (optional)
+        run: flutter build apk --release
+
+      # Optional: You can cache dependencies to speed up builds
+      - name: Cache pub packages
+        uses: actions/cache@v4
         with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
-          channelId: live
-          projectId: music-template-mkrjdo
-        env:
-          FIREBASE_CLI_PREVIEWS: hostingchannels
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
