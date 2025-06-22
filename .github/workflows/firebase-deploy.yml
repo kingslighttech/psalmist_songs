@@ -16,18 +16,14 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.9'  # Keep consistent with local version
+          flutter-version: '3.13.9'  # Use older version compatible with go_router you're locking
           channel: stable
 
-      - name: Downgrade http to avoid web conflict
+      - name: Remove flutter_test from pubspec.yaml (for CI only)
         run: |
-          sed -i 's/^ *http: .*$/  http: ^1.1.0/' pubspec.yaml
+          sed -i '/flutter_test:/,+1d' pubspec.yaml
 
-      - name: Preserve go_router version
-        run: |
-          sed -i 's/^ *go_router: .*$/  go_router: 15.2.3/' pubspec.yaml
-
-      - name: Install dependencies
+      - name: Get dependencies
         run: flutter pub get
 
       - name: Build Flutter Web
