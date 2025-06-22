@@ -1,34 +1,43 @@
-name: Build & Deploy Flutter Web to Firebase Hosting
+name: Build and Deploy Flutter Web
 
 on:
   push:
     branches:
-      - main  # or your deployment branch
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.x' # Use your required Flutter version
+          flutter-version: '3.22.0'
+          channel: stable
 
-      - name: Install Dependencies
+      - name: Enable Flutter Web
+        run: flutter config --enable-web
+
+      - name: Upgrade Flutter & dependencies
+        run: |
+          flutter upgrade
+          flutter pub upgrade --major-versions
+
+      - name: Install dependencies
         run: flutter pub get
 
-      - name: Build Flutter Web
+      - name: Build Flutter web
         run: flutter build web --release
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           channelId: live
-          projectId: music-template-mkrjdo
-          
+          projectId: your-project-id
+        env:
+          FIREBASE_CLI_PREVIEWS: hostingchannels
