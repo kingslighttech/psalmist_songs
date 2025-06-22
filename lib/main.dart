@@ -57,12 +57,13 @@ class _MyAppState extends State<MyApp> {
   late AppStateNotifier _appStateNotifier;
   late GoRouter _router;
 
-  String getRoute([RouteMatch? match]) {
+  String getRoute([RouteMatch? routeMatch]) {
     try {
-      final matchList = match is ImperativeRouteMatch
-          ? match.matches
+      final RouteMatch lastMatch =
+          routeMatch ?? _router.routerDelegate.currentConfiguration.last;
+      final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
+          ? lastMatch.matches
           : _router.routerDelegate.currentConfiguration;
-
       return matchList.uri.toString();
     } catch (e) {
       return '/';
@@ -70,12 +71,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   List<String> getRouteStack() {
-    try {
-      final matchList = _router.routerDelegate.currentConfiguration.matches;
-      return matchList.map((m) => getRoute(m)).toList();
-    } catch (e) {
-      return ['/'];
-    }
+    final matchList = _router.routerDelegate.currentConfiguration.matches;
+    return matchList
+        .whereType<RouteMatch>() // Cast only RouteMatch (not RouteMatchBase)
+        .map((e) => getRoute(e))
+        .toList();
   }
 
   late Stream<BaseAuthUser> userStream;
@@ -84,13 +84,14 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
     _appStateNotifier = AppStateNotifier.instance;
     _router = createRouter(_appStateNotifier);
+
     userStream = psalmistSongsFirebaseUserStream()
       ..listen((user) {
         _appStateNotifier.update(user);
       });
+
     jwtTokenStream.listen((_) {});
     Future.delayed(
       Duration(milliseconds: isWeb ? 0 : 2000),
