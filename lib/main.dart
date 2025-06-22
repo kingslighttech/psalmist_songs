@@ -22,12 +22,10 @@ void main() async {
   usePathUrlStrategy();
 
   await initFirebase();
-
   await FlutterFlowTheme.initialize();
-
   await FFLocalizations.initialize();
 
-  final appState = FFAppState(); // Initialize FFAppState
+  final appState = FFAppState();
   await appState.initializePersistedState();
 
   runApp(ChangeNotifierProvider(
@@ -37,7 +35,6 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  // This widget is the root of your application.
   @override
   State<MyApp> createState() => _MyAppState();
 
@@ -55,27 +52,33 @@ class MyAppScrollBehavior extends MaterialScrollBehavior {
 
 class _MyAppState extends State<MyApp> {
   Locale? _locale = FFLocalizations.getStoredLocale();
-
   ThemeMode _themeMode = FlutterFlowTheme.themeMode;
 
   late AppStateNotifier _appStateNotifier;
   late GoRouter _router;
-  String getRoute([RouteMatch? routeMatch]) {
-    final RouteMatch lastMatch =
-        routeMatch ?? _router.routerDelegate.currentConfiguration.last;
-    final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
-        ? lastMatch.matches
-        : _router.routerDelegate.currentConfiguration;
-    return matchList.uri.toString();
+
+  String getRoute([RouteMatch? match]) {
+    try {
+      final matchList = match is ImperativeRouteMatch
+          ? match.matches
+          : _router.routerDelegate.currentConfiguration;
+
+      return matchList.uri.toString();
+    } catch (e) {
+      return '/';
+    }
   }
 
-  List<String> getRouteStack() =>
-      _router.routerDelegate.currentConfiguration.matches
-          .map((e) => getRoute(e))
-          .toList();
+  List<String> getRouteStack() {
+    try {
+      final matchList = _router.routerDelegate.currentConfiguration.matches;
+      return matchList.map((m) => getRoute(m)).toList();
+    } catch (e) {
+      return ['/'];
+    }
+  }
 
   late Stream<BaseAuthUser> userStream;
-
   final authUserSub = authenticatedUserStream.listen((_) {});
 
   @override
@@ -98,7 +101,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     authUserSub.cancel();
-
     super.dispose();
   }
 
