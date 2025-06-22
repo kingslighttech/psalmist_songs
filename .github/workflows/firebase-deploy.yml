@@ -16,10 +16,17 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.9'  # Match the Flutter version you used locally
+          flutter-version: '3.13.9'
           channel: stable
 
-      - name: Install dependencies (no upgrade)
+      - name: Manually fix go_router version
+        run: |
+          sed -i 's/^ *go_router: .*$/  go_router: ^10.1.2/' pubspec.yaml
+
+      - name: Upgrade other dependencies
+        run: flutter pub upgrade --major-versions
+
+      - name: Install dependencies
         run: flutter pub get
 
       - name: Build Flutter Web
