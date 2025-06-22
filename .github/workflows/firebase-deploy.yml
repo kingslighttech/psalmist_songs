@@ -16,15 +16,16 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.9'
+          flutter-version: '3.13.9'  # Keep consistent with local version
           channel: stable
 
-      - name: Manually fix go_router version
+      - name: Downgrade http to avoid web conflict
         run: |
-          sed -i 's/^ *go_router: .*$/  go_router: ^10.1.2/' pubspec.yaml
+          sed -i 's/^ *http: .*$/  http: ^1.1.0/' pubspec.yaml
 
-      - name: Upgrade other dependencies
-        run: flutter pub upgrade --major-versions
+      - name: Preserve go_router version
+        run: |
+          sed -i 's/^ *go_router: .*$/  go_router: 15.2.3/' pubspec.yaml
 
       - name: Install dependencies
         run: flutter pub get
