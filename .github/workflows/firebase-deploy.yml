@@ -1,46 +1,43 @@
-name: Flutter CI
+name: Build and Deploy Flutter Web
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.1' # Or your Flutter version
+          flutter-version: '3.22.0'
           channel: stable
 
-      - name: Install dependencies (except go_router)
+      - name: Enable Flutter Web
+        run: flutter config --enable-web
+
+      - name: Upgrade Flutter & dependencies
         run: |
-          # Ensure pubspec.yaml has go_router locked to 6.5.0
+          flutter upgrade
           flutter pub upgrade --major-versions
 
-      - name: Analyze project
-        run: flutter analyze
+      - name: Install dependencies
+        run: flutter pub get
 
-      - name: Run tests
-        run: flutter test
+      - name: Build Flutter web
+        run: flutter build web --release
 
-      - name: Build APK (optional)
-        run: flutter build apk --release
-
-      # Optional: You can cache dependencies to speed up builds
-      - name: Cache pub packages
-        uses: actions/cache@v4
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          path: |
-            ~/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
-
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          channelId: live
+          projectId: music-template-mkrjdo
+        env:
+          FIREBASE_CLI_PREVIEWS: hostingchannels
